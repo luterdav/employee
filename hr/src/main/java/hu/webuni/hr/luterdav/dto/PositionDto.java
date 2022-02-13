@@ -12,19 +12,26 @@ public class PositionDto {
 	private long id;
 	private String name;
 	private String education;
-	private double minSalary;
+//	private double minSalary;
 //	List<CompanyDto> companies = new ArrayList<>();
 	
 	public PositionDto() {
 	}
+	
+	
 
-	public PositionDto(long id, String name, String education, double minSalary) {
-	super();
-	this.id = id;
-	this.name = name;
-	this.education = education;
-	this.minSalary = minSalary;
-}
+	public PositionDto(String name) {
+		super();
+		this.name = name;
+	}
+
+    
+
+	public PositionDto(String name, String education) {
+		super();
+		this.name = name;
+		this.education = education;
+	}
 
 	public long getId() {
 		return id;
@@ -44,12 +51,7 @@ public class PositionDto {
 	public void setEducation(String education) {
 		this.education = education;
 	}
-	public double getMinSalary() {
-		return minSalary;
-	}
-	public void setMinSalary(double minSalary) {
-		this.minSalary = minSalary;
-	}
+
 	
 	
 

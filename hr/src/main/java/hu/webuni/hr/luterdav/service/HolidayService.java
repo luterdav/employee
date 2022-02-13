@@ -26,9 +26,12 @@ public class HolidayService {
 
 	@Autowired
 	HolidayRepository holidayRepository;
+	@Autowired
+	PositionService positionService;
 
 	@Transactional
 	public Holiday save(Holiday holiday) {
+		positionService.setPositionForEmployee(holiday.getHolidayCreatedBy());
 		return holidayRepository.save(holiday);
 	}
 
@@ -62,7 +65,8 @@ public class HolidayService {
 	@Transactional
 	public void updateHolidayRequestStatus(long holidayRequestId, boolean approve) {
 		Holiday holiday = holidayRepository.findById(holidayRequestId).get();
-		if (holiday.getStatus().equalsIgnoreCase("Waiting for approval"))
+		if (holiday.getStatus().equalsIgnoreCase("Waiting for approval")
+				&& holiday.getHolidayCreatedBy().getManager() == null)
 			if (approve)
 				holidayRepository.updateStatus(holidayRequestId, "Approved");
 			else

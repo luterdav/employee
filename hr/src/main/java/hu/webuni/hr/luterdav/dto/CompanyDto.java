@@ -13,13 +13,14 @@ public class CompanyDto {
 	private int registrationNumber;
 	private String name;
 	private String address;
-	private String companyType;
+	private CompanyType companyType;
 	private List<EmployeeDto> employees = new ArrayList<>();
 	
 	public CompanyDto() {
 	}
 
-	public CompanyDto(long id, int registrationNumber, String name, String address, String companyType,
+
+	public CompanyDto(long id, int registrationNumber, String name, String address, CompanyType companyType,
 			List<EmployeeDto> employees) {
 		super();
 		this.id = id;
@@ -31,17 +32,14 @@ public class CompanyDto {
 	}
 
 
-
-	public String getCompanyType() {
+	public CompanyType getCompanyType() {
 		return companyType;
 	}
 
 
-
-	public void setCompanyType(String companyType) {
+	public void setCompanyType(CompanyType companyType) {
 		this.companyType = companyType;
 	}
-
 
 
 	public long getId() {

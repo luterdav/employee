@@ -17,27 +17,35 @@ import hu.webuni.hr.luterdav.model.Employee;
 public interface PositionMapper {
 
 	List<PositionDto> positionsToDtos(List<Position> positions);
-
-//	@IterableMapping(qualifiedByName = "summary")
-//	List<PositionDto> positionsToSummaryDtos(List<Position> positions);
+	
+	List<Position> dtosToPositions(List<PositionDto> positions);
 
 	PositionDto positionToDto(Position position);
 	
+	Position dtoToPosition(PositionDto positionDto);
+
 	@Mapping(target = "position", ignore = true)
-	@Mapping(target = "company.companyType", ignore = true)
 	EmployeeDto employeeToDto(Employee employee);
+
+
+
 	
-	@InheritInverseConfiguration
-	@Mapping(target = "position", ignore = true)
-	@Mapping(target = "company.companyType", ignore = true)
-	Employee dtoToEmployee(EmployeeDto employeeDto);
+	
+//	@IterableMapping(qualifiedByName = "summary")
+//	List<PositionDto> positionsToSummaryDtos(List<Position> positions);
+
+	
+//	@Mapping(target = "position", ignore = true)
+//	@Mapping(target = "company.companyType", ignore = true)
+	
+//	@InheritInverseConfiguration
+//	@Mapping(target = "position", ignore = true)
+//	@Mapping(target = "company.companyType", ignore = true)
 	
 //	@Mapping(target = "employees", ignore = true)
 //	@Named("summary")
 //	PositionDto positionToSummaryDto(Position position);
 
-	Position dtoToPosition(PositionDto positionDto);
 	
-	List<Position> dtosToPositions(List<PositionDto> positions);
 
 }

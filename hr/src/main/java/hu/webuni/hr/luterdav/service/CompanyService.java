@@ -1,12 +1,8 @@
 package hu.webuni.hr.luterdav.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.OptionalDouble;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -14,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import hu.webuni.hr.luterdav.model.Company;
+import hu.webuni.hr.luterdav.model.CompanyType;
 import hu.webuni.hr.luterdav.model.Employee;
 import hu.webuni.hr.luterdav.repository.CompanyRepository;
+import hu.webuni.hr.luterdav.repository.CompanyTypeRepository;
 import hu.webuni.hr.luterdav.repository.EmployeeRepository;
 
 @Service
@@ -23,20 +21,25 @@ public class CompanyService {
 	
 	@Autowired
 	CompanyRepository companyRepository;
-	
 	@Autowired
 	EmployeeRepository employeeRepository;
+	@Autowired
+	CompanyTypeRepository companyTypeRepository;
 	
-	
+	@Transactional
 	public Company save(Company company) {
+		setCompanyType(company);
 		return companyRepository.save(company);
 	}
 	
+	@Transactional
 	public Company update(Company company) {
-		if (companyRepository.existsById(company.getId()))
+		if (companyRepository.existsById(company.getId())) {
+			setCompanyType(company);
 			return companyRepository.save(company);
-		else
+		}else {
 			throw new NoSuchElementException();
+		}
 	}
 	
 	public List<Company> findAll(){
@@ -54,6 +57,22 @@ public class CompanyService {
 	public void deleteAll() {
 		companyRepository.deleteAll();
 	}
+	
+	public void setCompanyType(Company company) {
+        CompanyType companyType = company.getCompanyType();
+        if (companyType != null) {
+            String companyTypeName = companyType.getName();
+            if (companyTypeName != null) {
+                List<CompanyType> companyTypesByName = companyTypeRepository.findByName(companyTypeName);
+                if (companyTypesByName.isEmpty()) {
+                    companyType = companyTypeRepository.save(new CompanyType(companyTypeName));
+                } else {
+                    companyType = companyTypesByName.get(0);
+                }
+            }
+        }
+        company.setCompanyType(companyType);
+    }
 	
 	@Transactional
 	public Company addEmployee(long id, Employee employee) {

@@ -19,13 +19,13 @@ import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 
-@NamedEntityGraph(
-		name = "Company.full",
-        attributeNodes = {
-        		@NamedAttributeNode("employees"),
-        		@NamedAttributeNode("companyType")
-        }
-)
+//@NamedEntityGraph(
+//		name = "Company.full",
+//        attributeNodes = {
+//        		@NamedAttributeNode("employees"),
+//        		@NamedAttributeNode("companyType")
+//        }
+//)
 @Entity
 public class Company {
 	
@@ -39,7 +39,7 @@ public class Company {
 	@ManyToOne
 	private CompanyType companyType;
 	
-	@OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "company")
 	private List<Employee> employees;
 
 	

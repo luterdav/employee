@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
@@ -25,6 +26,7 @@ import hu.webuni.hr.luterdav.model.Company;
 import hu.webuni.hr.luterdav.model.Employee;
 import hu.webuni.hr.luterdav.model.Holiday;
 import hu.webuni.hr.luterdav.model.Position;
+import hu.webuni.hr.luterdav.repository.EmployeeRepository;
 import hu.webuni.hr.luterdav.repository.PositionDetailsByCompanyRespository;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -39,19 +41,28 @@ public class HolidayServiceIT {
 	@Autowired
 	EmployeeService employeeService;
 	@Autowired
-	HolidayService holidayService;
+	EmployeeRepository employeeRepository;
 	@Autowired
-	PositionDetailsByCompanyRespository positionDetailsByCompanyRespository;
+	HolidayService holidayService;
+//	@Autowired
+//	PositionDetailsByCompanyRespository positionDetailsByCompanyRespository;
 	@Autowired
 	HolidayMapper holidayMapper;
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	private static final String BASE_URI = "/api/holidays";
+	
+	String username = "tesUser";
+	String password = "1234";
 
 	@BeforeEach
 	public void init() {
 		holidayService.deleteAll();
 		employeeService.deleteAll();
 		positionService.deleteAll();
+		
+
 	}
 
 	
@@ -67,8 +78,8 @@ public class HolidayServiceIT {
 		return new Employee(name, position, salary, workSarted);
 	}
 	
-	public Employee createEmployeeForHoliday(String name, int salary, Position position, LocalDateTime workSarted) {
-		return employeeService.save(new Employee(name, position, salary, workSarted)) ;
+	public Employee createEmployeeForHoliday(String name, String username, String password, int salary, Position position, LocalDateTime workSarted) {
+		return employeeService.save(new Employee(name, username, passwordEncoder.encode(password), position, salary, workSarted)) ;
 	}
 	
 	public Holiday createHolidayRequest(LocalDateTime startOfHoliday, LocalDateTime endOfHoliday, Employee holidayCreatedBy, 
@@ -80,7 +91,7 @@ public class HolidayServiceIT {
 	@Test
 	void testCreateHolidayRequest() throws Exception {
 		Position position = createPosition("Accountant", "University");
-		Employee employee = createEmployeeForHoliday("Jackson", 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1));
+		Employee employee = createEmployeeForHoliday("Jackson", username, password, 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1));
 		createHolidayRequest(LocalDateTime.of(2022, 2, 2, 0, 0, 0), LocalDateTime.of(2022, 2, 6, 0, 0, 0), 
 				employee, LocalDateTime.of(2022, 1, 2, 0, 0, 0), "waiting for approval");
 		
@@ -107,7 +118,7 @@ public class HolidayServiceIT {
 	@Test
 	void testApproveHolidayRequest() throws Exception {
 		Position position = createPosition("Accountant", "University");
-		Employee employee = createEmployeeForHoliday("Jackson", 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1));
+		Employee employee = createEmployeeForHoliday("Jackson", username, password, 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1));
 		HolidayDto newHolidayRequest = holidayMapper.holidayToDto(new Holiday(LocalDateTime.of(2022, 3, 2, 0, 0, 0), LocalDateTime.of(2022, 3, 8, 0, 0, 0), 
 				employee, LocalDateTime.of(2022, 1, 10, 0, 0, 0), "Waiting for approval"));
 		
@@ -135,7 +146,7 @@ public class HolidayServiceIT {
 	@Test
 	void testUpdateHolidayRequest() throws Exception {
 		Position position = createPosition("Accountant", "University");
-		Employee employee = createEmployeeForHoliday("Jackson", 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1));
+		Employee employee = createEmployeeForHoliday("Jackson", username, password, 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1));
 		HolidayDto newHolidayRequest = holidayMapper.holidayToDto(new Holiday(LocalDateTime.of(2022, 3, 2, 0, 0, 0), LocalDateTime.of(2022, 3, 8, 0, 0, 0), 
 				employee, LocalDateTime.of(2022, 1, 10, 0, 0, 0), "Waiting for approval"));
 		
@@ -166,7 +177,7 @@ public class HolidayServiceIT {
 	@Test
 	void testDeleteHolidayRequest() throws Exception {
 		Position position = createPosition("Accountant", "University");
-		Employee employee = createEmployeeForHoliday("Jackson", 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1));
+		Employee employee = createEmployeeForHoliday("Jackson", username, password, 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1));
 		HolidayDto newHolidayRequest = holidayMapper.holidayToDto(new Holiday(LocalDateTime.of(2022, 3, 2, 0, 0, 0), LocalDateTime.of(2022, 3, 8, 0, 0, 0), 
 				employee, LocalDateTime.of(2022, 1, 10, 0, 0, 0), "Waiting for approval"));
 		
@@ -188,13 +199,11 @@ public class HolidayServiceIT {
 		assertThat(sizeBefore).isEqualTo(sizeAfter + 1);
 	}
 	
-	
-	
 	@Test
 	void testFindHolidayRequestsByExample() throws Exception{
 		Position position = createPosition("Accountant", "University");
-		Employee employee1 = createEmployeeForHoliday("Jackson", 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1));
-		Employee employee2 = createEmployeeForHoliday("Jacky", 390_000, position, LocalDateTime.of(2021, 8, 2, 1, 1, 1));
+		Employee employee1 = createEmployeeForHoliday("Jackson", username, password, 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1));
+		Employee employee2 = createEmployeeForHoliday("Jacky", "testUser2", "1111", 390_000, position, LocalDateTime.of(2021, 8, 2, 1, 1, 1));
 		long holiday1 = createHolidayRequest(LocalDateTime.of(2022, 2, 2, 0, 0, 0), LocalDateTime.of(2022, 2, 6, 0, 0, 0), 
 				employee1, LocalDateTime.of(2022, 1, 2, 0, 0, 0), "Waiting for approval").getId();
 		long holiday2 = createHolidayRequest(LocalDateTime.of(2022, 2, 3, 0, 0, 0), LocalDateTime.of(2022, 2, 5, 0, 0, 0), 
@@ -204,14 +213,12 @@ public class HolidayServiceIT {
 		Holiday example = new Holiday();
 		example.setStartOfHoliday(LocalDateTime.of(2022, 2, 1, 0, 0, 0));
 		example.setEndOfHoliday(LocalDateTime.of(2022, 2, 8, 0, 0, 0));
-		example.setHolidayCreatedBy(createEmployeeForHoliday("jack", 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1)));
+		example.setHolidayCreatedBy(createEmployeeForHoliday("jack", "testUser3", "2222", 390_000, position, LocalDateTime.of(2020, 8, 2, 1, 1, 1)));
 		example.setDateOfHolidayRequested(LocalDateTime.of(2022, 1, 3, 0, 0, 0));
 		example.setStatus("Waiting for approval");
 		List<Holiday> foundHolidayRequests = this.holidayService.findHolidayRequestsByExample(example);
 		assertThat(foundHolidayRequests.stream().map(Holiday::getId).collect(Collectors.toList()))
 		.containsExactly(holiday1, holiday2);
-		
-		
 	}
 	
 	private ResponseSpec deleteHolidayRequest(HolidayDto newHolidayRequest) {
@@ -219,6 +226,7 @@ public class HolidayServiceIT {
 		return webTestClient
 				.method(HttpMethod.DELETE)
 				.uri(path)
+				.headers(headers -> headers.setBasicAuth(username, password))
 				.bodyValue(newHolidayRequest)
 				.exchange();
 	}
@@ -228,6 +236,7 @@ public class HolidayServiceIT {
 		return webTestClient
 				.put()
 				.uri(path)
+				.headers(headers -> headers.setBasicAuth(username, password))
 				.bodyValue(newHolidayRequest)
 				.exchange();
 	}
@@ -241,6 +250,7 @@ public class HolidayServiceIT {
 				.path(path)
 				.queryParam("approve", true)
 				.build())
+				.headers(headers -> headers.setBasicAuth(username, password))
 				.bodyValue(newHolidayRequest)
 				.exchange();
 	}
@@ -249,6 +259,7 @@ public class HolidayServiceIT {
 		return webTestClient
 				.post()
 				.uri(BASE_URI)
+				.headers(headers -> headers.setBasicAuth(username, password))
 				.bodyValue(newHolidayRequest)
 				.exchange();
 	}
@@ -257,6 +268,7 @@ public class HolidayServiceIT {
 		List<HolidayDto> responseList = webTestClient
 				.get()
 				.uri(BASE_URI)
+				.headers(headers -> headers.setBasicAuth(username, password))
 				.exchange()
 				.expectStatus()
 				.isOk()

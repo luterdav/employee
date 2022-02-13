@@ -64,6 +64,22 @@ public class PositionService {
 	public void deleteAll() {
 		positionRepository.deleteAll();
 	}
+	
+	public void setPositionForEmployee(Employee employee) {
+        Position position = employee.getPosition();
+        if (position != null) {
+            String positionName = position.getName();
+            if (positionName != null) {
+                List<Position> positionsByName = positionRepository.findByName(positionName);
+                if (positionsByName.isEmpty()) {
+                    position = positionRepository.save(new Position(positionName, null));
+                } else {
+                    position = positionsByName.get(0);
+                }
+            }
+        }
+        employee.setPosition(position);
+    }
 
 
     @Transactional

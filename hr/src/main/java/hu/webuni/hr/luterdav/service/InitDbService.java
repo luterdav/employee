@@ -1,10 +1,12 @@
 package hu.webuni.hr.luterdav.service;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import hu.webuni.hr.luterdav.model.Company;
@@ -34,6 +36,8 @@ public class InitDbService {
 	PositionDetailsByCompanyRespository positionDetailsByCompanyRespository;
 	@Autowired
 	HolidayService holidayService;
+	@Autowired
+	PasswordEncoder passwordEncoder;
 	
 	public void clearDB() {
 		employeeRepository.deleteAll();
@@ -127,16 +131,21 @@ public class InitDbService {
 		
 		Employee testEmployee1 = new Employee();
 		testEmployee1.setName("John");
+		testEmployee1.setUsername("baka");
+		testEmployee1.setPassword(passwordEncoder.encode("1234"));
 		testEmployee1.setPosition(testPosition1);
-		testEmployee1.setSalary(550_000);
+		testEmployee1.setSalary(600_000);
 		testEmployee1.setWorkStarted(LocalDateTime.of(2019,10,10,10,10,10));
 		testEmployee1.setCompany(testCompany1);
 		employeeRepository.save(testEmployee1);
 		
 		Employee testEmployee2 = new Employee();
 		testEmployee2.setName("Peter");
+		testEmployee2.setUsername("taka");
+		testEmployee2.setPassword(passwordEncoder.encode("1324"));
+		testEmployee2.setManager(testEmployee1);
 		testEmployee2.setPosition(testPosition2);
-		testEmployee2.setSalary(400_000);
+		testEmployee2.setSalary(350_000);
 		testEmployee2.setWorkStarted(LocalDateTime.of(2016,10,10,10,10,10));
 		testEmployee2.setCompany(testCompany1);
 		employeeRepository.save(testEmployee2);

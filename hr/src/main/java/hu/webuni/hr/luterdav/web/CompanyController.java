@@ -51,7 +51,7 @@ public class CompanyController {
 		List<Company> companies = null;
 		if(full == null || !full) {
 			companies = companyService.findAll();
-		    return companyMapper.companiesToSummaryDtos(companies);
+			return companyMapper.companiesToSummaryDtos(companies);
 		}else {
 			companies = companyRepository.findAllWithEmployees();
 		    return companyMapper.companiesToDtos(companies);

@@ -20,32 +20,32 @@ public interface CompanyMapper {
 
 	List<CompanyDto> companiesToDtos(List<Company> companies);
 
-	@IterableMapping(qualifiedByName = "summary")
-	List<CompanyDto> companiesToSummaryDtos(List<Company> companies);
-
-	@Mapping(target = "companyType", source = "companyType.name")
 	CompanyDto companyToDto(Company company);
+
+	Company dtoToCompany(CompanyDto companyDto);
 	
-	@Mapping(target = "company", ignore = true)
+	List<Company> dtosToCompanies(List<CompanyDto> companies);
+	
 	@Mapping(target = "position", source = "position.name")
+	@Mapping(target = "company", ignore = true)
 	EmployeeDto employeeToDto(Employee employee);
 	
 	@InheritInverseConfiguration
 	Employee dtoToEmployee(EmployeeDto employeeDto);
 	
-//	@Mapping(target = "companies", ignore = true)
-	PositionDto positionToDto(Position position);
-	
-	Position dtoToPosition(PositionDto positionDto);
-	
 	@Mapping(target = "employees", ignore = true)
-	@Mapping(target = "companyType", source = "companyType.name")
 	@Named("summary")
 	CompanyDto companyToSummaryDto(Company company);
-
-	@Mapping(target = "companyType.name", source = "companyType")
-	Company dtoToCompany(CompanyDto companyDto);
 	
-	List<Company> dtosToCompanies(List<CompanyDto> companies);
+	@IterableMapping(qualifiedByName = "summary")
+	List<CompanyDto> companiesToSummaryDtos(List<Company> companies);
+	
+
+
+
+
+	
+	
+
 
 }

@@ -12,7 +12,7 @@ public class HolidayDto {
 	private long id;
 	private LocalDateTime startOfHoliday;
 	private LocalDateTime endOfHoliday;
-	private Employee holidayCreatedBy;
+	private EmployeeDto holidayCreatedBy;
 	private LocalDateTime dateOfHolidayRequested;
 	private String status;
 	
@@ -43,11 +43,13 @@ public class HolidayDto {
 		this.endOfHoliday = endOfHoliday;
 	}
 
-	public Employee getHolidayCreatedBy() {
+
+
+	public EmployeeDto getHolidayCreatedBy() {
 		return holidayCreatedBy;
 	}
 
-	public void setHolidayCreatedBy(Employee holidayCreatedBy) {
+	public void setHolidayCreatedBy(EmployeeDto holidayCreatedBy) {
 		this.holidayCreatedBy = holidayCreatedBy;
 	}
 

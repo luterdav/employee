@@ -14,10 +14,14 @@ import hu.webuni.hr.luterdav.model.Company;
 public interface CompanyRepository extends JpaRepository<Company, Long>{
 	
 //	@Query("SELECT DISTINCT c FROM Company c LEFT JOIN FETCH c.employees")
-//    @EntityGraph(attributePaths = "employees")
-	@EntityGraph("Company.full")
+    @EntityGraph(attributePaths = {"employees", "employees.position"})
+//	@EntityGraph("Company.full")
 	@Query("SELECT c FROM Company c")
 	public List<Company> findAllWithEmployees();
+    
+    
+//    @Query("SELECT c.id, c.registrationNumber, c.name, c.address, c.companyType FROM Company c")
+//	public List<Company> findAllWithoutEmployees();
 	
 //	@Query("SELECT DISTINCT c FROM Company c JOIN c.employees e WHERE e.salary > :minSalary")
 //	public List<Company> findByEmployeeWithSalaryHigherThan(Integer minSalary);

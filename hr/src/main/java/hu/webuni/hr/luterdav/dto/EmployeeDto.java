@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Set;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -16,6 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import hu.webuni.hr.luterdav.dto.View.BaseData;
+import hu.webuni.hr.luterdav.model.Employee;
 
 public class EmployeeDto {
 
@@ -29,7 +31,7 @@ public class EmployeeDto {
 	private LocalDateTime workStarted;
 	
 	private CompanyDto company;
-
+	
 	public EmployeeDto() {
 	}
 
@@ -44,21 +46,7 @@ public class EmployeeDto {
 		this.company = company;
 	}
 
-	public String getPosition() {
-		return position;
-	}
 
-	public void setPosition(String position) {
-		this.position = position;
-	}
-
-	public CompanyDto getCompany() {
-		return company;
-	}
-	
-	public void setCompany(CompanyDto company) {
-		this.company = company;
-	}
 	public long getId() {
 		return id;
 	}
@@ -73,6 +61,14 @@ public class EmployeeDto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getPosition() {
+		return position;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
 	}
 
 	public int getSalary() {
@@ -90,7 +86,15 @@ public class EmployeeDto {
 	public void setWorkStarted(LocalDateTime workStarted) {
 		this.workStarted = workStarted;
 	}
-	
+
+	public CompanyDto getCompany() {
+		return company;
+	}
+
+	public void setCompany(CompanyDto company) {
+		this.company = company;
+	}
+
 	@Override
 	public String toString() {
 		return "Employee [id=" + id + ", name=" + name + ", title=" + position + ", salary=" + salary + ", workStarted="

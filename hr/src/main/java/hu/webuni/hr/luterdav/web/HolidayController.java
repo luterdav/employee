@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,6 +58,7 @@ public class HolidayController {
 	}
 
 	@PostMapping
+	@PreAuthorize("#holidayDto.holidayCreatedBy.id == authentication.principal.employee.id")
 	public HolidayDto newHolidayRequest(@RequestBody HolidayDto holidayDto) {
 		Holiday holiday = holidayService.save(holidayMapper.dtoToHoliday(holidayDto));
 		return holidayMapper.holidayToDto(holiday);
@@ -65,10 +67,10 @@ public class HolidayController {
 	@PutMapping("/{holidayRequestId}/updateStatus")
 	public void updateHolidayRequestStatus(@PathVariable long holidayRequestId, @RequestParam Boolean approve) {
 		holidayService.updateHolidayRequestStatus(holidayRequestId, approve);
-
 	}
 
 	@PutMapping("/{holidayRequestId}/update")
+	@PreAuthorize("#holidayDto.holidayCreatedBy.name == authentication.principal.employee.name")
 	public HolidayDto updateHolidayRequest(@PathVariable long holidayRequestId, @RequestBody HolidayDto holidayDto) {
 		holidayDto.setId(holidayRequestId);
 		try {
@@ -82,6 +84,7 @@ public class HolidayController {
 	}
 
 	@DeleteMapping("/{holidayRequestId}/delete")
+	@PreAuthorize("#holidayDto.holidayCreatedBy.name == authentication.principal.employee.name")
 	public void deleteHolidayRequest(@PathVariable long holidayRequestId, @RequestBody HolidayDto holidayDto) {
 		if(holidayDto.getStatus().equalsIgnoreCase("waiting for approval"))
 			holidayService.delete(holidayRequestId);

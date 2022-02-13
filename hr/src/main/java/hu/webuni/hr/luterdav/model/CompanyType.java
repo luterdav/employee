@@ -11,6 +11,7 @@ public class CompanyType{
 	private int id;
 	
 	private String name;
+	
 
 	public CompanyType() {
 		super();

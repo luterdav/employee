@@ -17,6 +17,7 @@ import hu.webuni.hr.luterdav.model.Company;
 import hu.webuni.hr.luterdav.model.Employee;
 import hu.webuni.hr.luterdav.model.Position;
 import hu.webuni.hr.luterdav.repository.EmployeeRepository;
+import hu.webuni.hr.luterdav.repository.PositionRepository;
 
 
 @Service
@@ -25,18 +26,23 @@ public abstract class AbstractEmployeeService implements EmployeeService {
 
 	@Autowired
 	EmployeeRepository employeeRepository;
+	@Autowired
+	PositionService positionService;
 
 	@Override
 	public Employee save(Employee employee) {
+		positionService.setPositionForEmployee(employee);
 		return employeeRepository.save(employee);
 	}
 
 	@Override
 	public Employee update(Employee employee) {
-		if (employeeRepository.existsById(employee.getId()))
+		if (employeeRepository.existsById(employee.getId())) {
+			positionService.setPositionForEmployee(employee);
 			return employeeRepository.save(employee);
-		else
+		}else {
 			throw new NoSuchElementException();
+		}
 	}
 	
 	@Override
